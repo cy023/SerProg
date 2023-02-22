@@ -1,5 +1,5 @@
 # SerProg
-A serial programming tool for microcontroller.
+A serial and secure programming tool for microcontroller.
 
 ### Reference project
 - [SAME54BOOT]
