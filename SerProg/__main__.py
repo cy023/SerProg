@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-SerProg CLI entry.
+serprog CLI entry.
 """
 
-from SerProg import cli_arg
-from SerProg import business
+from serprog import cli_arg
+from serprog import business
 
 import argparse
 import sys

@@ -3,9 +3,9 @@
 Sub-command implementation.
 """
 
-from SerProg import device
-from SerProg import loader
-from SerProg import exceptions
+from serprog import device
+from serprog import loader
+from serprog import exceptions
 
 import serial.tools.list_ports
 

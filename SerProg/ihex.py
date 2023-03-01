@@ -13,7 +13,7 @@ loader is supprot ihex file. The output binary data of compiler
     http://www.interlog.com/~speff/usefulinfo/Hexfrmt.pdf
 """
 
-from SerProg import exceptions
+from serprog import exceptions
 
 def parse(filename: str) -> list:
     """Parse ihex file to data blocks.
@@ -22,7 +22,7 @@ def parse(filename: str) -> list:
         filename (str): The file to parse.
     
     Raises:
-        SerProg.exceptions.IhexFormatError:
+        serprog.exceptions.IhexFormatError:
     
     Returns:
         list: data blocks with start address.
@@ -106,7 +106,7 @@ def padding_space(h, pgsz: int, space_data: bytes) -> list:
     """Padding each data block with `space_data` to let block size fit pgsz * N.
     
     Args:
-        h (list): response from `SerProg.ihex.parse`.
+        h (list): response from `serprog.ihex.parse`.
         pgsz (int): page size, e.g. 256, 512.
         space_data (bytes): the byte data used to padding.
     
@@ -146,7 +146,7 @@ def cut_to_pages(h, pgsz):
     """Cut each data block to pages.
     
     Args:
-        h (list): response from `SerProg.ihex.padding_space`.
+        h (list): response from `serprog.ihex.padding_space`.
         pgsz (int): page size, e.g. 256, 512.
     
     Returns:

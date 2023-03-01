@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-__version__ = "0.5.8"
+__version__ = "0.1.0"
 
-import SerProg.loader
+import serprog.loader
 
-Loader = SerProg.loader.Loader
+Loader = serprog.loader.Loader
 
 __all__ = ['Loader']

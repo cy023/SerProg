@@ -3,39 +3,26 @@
 CLI parameter paser
 """
 
-from SerProg import device
-from SerProg import business
-from SerProg import ihex
+from serprog import device
+from serprog import business
+from serprog import ihex
 
+import serial.tools.list_ports
 import argparse
 import os
-import sys
-import serial.tools.list_ports
-import gettext
 
 
 def parser_init(parser: argparse.ArgumentParser):
 
-    parser.description = 'Program to ASA-series board.'
-
-    # lc Language
-    # parser.add_argument(
-    #     '--lc',
-    #     action='store',
-    #     dest='lc',
-    #     type=str,
-    #     required=False,
-    #     default='',
-    #     help='Set the language code. e.g. `zh_TW`, `en_US`'
-    # )
+    parser.description = 'A serial and secure programming tool for microcontroller.'
 
     subparsers = parser.add_subparsers(dest='subcmd')
 
-    # parser of 'programming' subcommand
+    # parser of 'prog' subcommand
     parser_pr = subparsers.add_parser(
         'prog',
-        aliases=[],
-        help='Program code to board.'
+        aliases = [],
+        help = 'Program the image to the board.'
     )
 
     parser_prog_init(parser_pr)
@@ -43,20 +30,20 @@ def parser_init(parser: argparse.ArgumentParser):
     # parser of 'print-devices' subcommand
     parser_pd = subparsers.add_parser(
         'print-devices',
-        aliases=['pd'],
-        help='List all available devices.'
+        aliases = ['pd'],
+        help = 'List all available devices.'
     )
 
     # parser of 'print-ports' subcommand
     parser_pp = subparsers.add_parser(
         'print-ports',
-        aliases=['pp'],
-        help='List all available serial ports.'
+        aliases = ['pp'],
+        help = 'List all available serial ports.'
     )
 
 
 def parser_prog_init(parser: argparse.ArgumentParser):
-    """Parser of CLI sub-command.
+    """ Parser of CLI sub-command.
 
     Args:
         parser (argparse.ArgumentParser): Parser of CLI sub-command
