@@ -15,13 +15,13 @@ class Command(enum.IntEnum):
     PROG_END                = 0x03
     PROG_END_AND_GO_APP     = 0x04
     PROG_SET_GO_APP_DELAY   = 0x05
-    PROG_EXT_TO_INT         = 0x06
+    PROG_EXT_FLASH_BOOT     = 0x06
 
     FLASH_SET_PGSZ          = 0x10
     FLASH_GET_PGSZ          = 0x11
     FLASH_WRITE             = 0x12
     FLASH_READ              = 0x13
-    FLASH_VARIFY            = 0x14
+    FLASH_VERIFY            = 0x14
     FLASH_EARSE_SECTOR      = 0x15
     FLASH_EARSE_ALL         = 0x16
 
@@ -36,7 +36,7 @@ class Command(enum.IntEnum):
     EXT_FLASH_FCLOSE        = 0x31
     EXT_FLASH_WRITE         = 0x32
     EXT_FLASH_READ          = 0x33
-    EXT_FLASH_VARIFY        = 0x34
+    EXT_FLASH_VERIFY        = 0x34
     EXT_FLASH_EARSE_SECTOR  = 0x35
     EXT_FLASH_HEX_DEL       = 0x36
 

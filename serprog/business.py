@@ -41,10 +41,10 @@ def do_prog(args):
         print('ERROR: com port has been opened by another application.').format(args.port)
         sys.exit(1)
 
-    is_prog_flash = bool(args.flash_file)
-    is_ext_flash = bool(args.ext_flash_file)
-    is_prog_eep = bool(args.eep_file)
-    is_ext_to_int = bool(args.ext_to_int)
+    is_prog_flash     = bool(args.flash_file)
+    is_ext_flash      = bool(args.ext_flash_file)
+    is_prog_eeprom    = bool(args.eeprom_file)
+    is_ext_flash_boot = bool(args.ext_flash_boot)
 
     # Device number
     device_type = device.get_device_by_str(args.device)
@@ -55,12 +55,12 @@ def do_prog(args):
             device_type       = device_type,
             is_flash_prog     = is_prog_flash,
             is_ext_flash_prog = is_ext_flash,
-            is_eeprom_prog    = is_prog_eep,
-            is_ext_to_int     = is_ext_to_int,
+            is_eeprom_prog    = is_prog_eeprom,
+            is_ext_flash_boot = is_ext_flash_boot,
             is_go_app         = args.is_go_app,
             flash_file        = args.flash_file,
             ext_flash_file    = args.ext_flash_file,
-            eeprom_file       = args.eep_file,
+            eeprom_file       = args.eeprom_file,
             go_app_delay      = args.go_app_delay
         )
     except exceptions.ComuError:

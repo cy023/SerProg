@@ -97,9 +97,9 @@ def parser_prog_init(parser: argparse.ArgumentParser):
     # Select programmed file name in embedded file system. -i
     arg_i_help = 'Program from externel flash to internel flash.'
     parser.add_argument(
-        *('-i', '--ext2int'),
+        *('-i', '--extflash_boot'),
         action      = 'store_true',
-        dest        = 'ext_to_int',
+        dest        = 'ext_flash_boot',
         # type        = str,
         required    = False,
         help        = arg_i_help
@@ -110,7 +110,7 @@ def parser_prog_init(parser: argparse.ArgumentParser):
     parser.add_argument(
         *('-e', '--eeprom'),
         action      = 'store',
-        dest        = 'eep_file',
+        dest        = 'eeprom_file',
         type        = str,
         required    = False,
         help        = arg_e_help
@@ -156,10 +156,10 @@ def chk_prog_args(args: argparse.Namespace) -> bool:
         business.do_print_devices(args)
         return False
 
-    # Check whether it is ext_to_int status.
-    if (args.ext_to_int):
+    # Check whether it is ext_flash_boot status.
+    if (args.ext_flash_boot):
         pass
-    elif (args.flash_file is None) and (args.eep_file is None) and (args.ext_flash_file is None):
+    elif (args.flash_file is None) and (args.eeprom_file is None) and (args.ext_flash_file is None):
         errmsg = 'Error: No flash or eeprom needs to be burned, please use \'-f \', \'-e \', \'-E \' to specify the file.'
         print(errmsg)
         return False
@@ -187,14 +187,14 @@ def chk_prog_args(args: argparse.Namespace) -> bool:
             return False
 
     # EEPROM file check.
-    if args.eep_file is not None:
-        if not os.path.isfile(args.eep_file):
+    if args.eeprom_file is not None:
+        if not os.path.isfile(args.eeprom_file):
             errmsg = 'Error: Cannot find eeprom binary file {0}.'
-            print(errmsg.format(args.eep_file))
+            print(errmsg.format(args.eeprom_file))
             return False
-        elif not ihex.is_ihex(args.eep_file):
+        elif not ihex.is_ihex(args.eeprom_file):
             errmsg = 'Error: The eeprom binary file {0} is not ihex formatted.'
-            print(errmsg.format(args.eep_file))
+            print(errmsg.format(args.eeprom_file))
             return False
 
     # Serial port check.
