@@ -116,27 +116,6 @@ def parser_prog_init(parser: argparse.ArgumentParser):
         help        = arg_e_help
     )
 
-    # Select execute after programming. -r
-    arg_r_help = 'Enter the application after programing.'
-    parser.add_argument(
-        *('-r', '--run-after-prog'),
-        action      = 'store_true',
-        dest        = 'is_go_app',
-        required    = False,
-        help        = arg_r_help
-    )
-
-    # Select delay time of execution after programming. -delay
-    arg_delay_help = 'Set delay time from programing completion to executing application.(in ms)'
-    parser.add_argument(
-        *('-delay', '--go-app-delay'),
-        dest        = 'go_app_delay',
-        type        = int,
-        required    = False,
-        default     = 50,
-        help        = arg_delay_help
-    )
-
 
 def chk_prog_args(args: argparse.Namespace) -> bool:
     """ Check the 'prog' sub-command.

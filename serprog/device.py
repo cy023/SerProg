@@ -15,7 +15,7 @@ device_list = [
     {
         'name': 'ATSAME54_DEVB',
         'dev_type': 1,
-        'protocol_version': 2,
+        'protocol_version': 1,
         'userapp_start': 0x00010000,
         'userapp_size':  0x000F0000,
         'note': ''
@@ -23,7 +23,7 @@ device_list = [
     # {
     #     'name': 'NUM487KM_DEVB',
     #     'dev_type': 2,
-    #     'protocol_version': 2,
+    #     'protocol_version': 1,
     #     'userapp_start': 0x00010000,
     #     'userapp_size':  0x000F0000,
     #     'note': ''

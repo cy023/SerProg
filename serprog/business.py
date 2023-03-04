@@ -57,11 +57,9 @@ def do_prog(args):
             is_ext_flash_prog = is_ext_flash,
             is_eeprom_prog    = is_prog_eeprom,
             is_ext_flash_boot = is_ext_flash_boot,
-            is_go_app         = args.is_go_app,
             flash_file        = args.flash_file,
             ext_flash_file    = args.ext_flash_file,
             eeprom_file       = args.eeprom_file,
-            go_app_delay      = args.go_app_delay
         )
     except exceptions.ComuError:
         print("ERROR: Can't communicate with the device.")

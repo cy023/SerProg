@@ -97,18 +97,6 @@ class CommandTrnasHandler():
 
     def _block_get_packet(self):
         """ Get Packet function (blocking mode), for the long time operation.
-
-        Raises:
-            exceptions.ComuError: Packet format error.
-
-        Returns:
-            [dict[serprog.alp.Command, bytearray]]: Packet object.
-
-        Packet object format:
-            res = {
-                'command': (serprog.alp.Command) command number,
-                'data': (bytearray) packet data.
-            }
         """
         packet = None
 
@@ -137,6 +125,8 @@ class CommandTrnasHandler():
         print('\033[93m' + '\n[_put_packet]' + '\033[0m', req_raw)
         self._ser.write(req_raw)
 
+    ###############################
+
     def cmd_chk_protocol(self):
         self._put_packet(bootprotocol.Command.CHK_PROTOCOL, b'test')
         res = self._get_packet()
@@ -151,7 +141,6 @@ class CommandTrnasHandler():
     def cmd_prog_chk_device(self):
         self._put_packet(bootprotocol.Command.PROG_CHK_DEVICE, b'')
         res = self._get_packet()
-
         if res['command'] == bootprotocol.Command.PROG_CHK_DEVICE and res['data'][0] == 0:
             return True, res['data'][1]
         else:
@@ -160,25 +149,15 @@ class CommandTrnasHandler():
     def cmd_prog_end(self):
         self._put_packet(bootprotocol.Command.PROG_END, b'')
         res = self._get_packet()
-
         return res['command'] == bootprotocol.Command.PROG_END and res['data'][0] == 0
 
-    def cmd_prog_end_and_go_app(self):
-        self._put_packet(bootprotocol.Command.PROG_END_AND_GO_APP, b'')
-        res = self._get_packet()
-
-        return res['command'] == bootprotocol.Command.PROG_END_AND_GO_APP and res['data'][0] == 0
-
-    def cmd_prog_set_go_app_delay(self, t):
-        self._put_packet(bootprotocol.Command.PROG_SET_GO_APP_DELAY,
-                         t.to_bytes(2, 'little'))
-        res = self._get_packet()
-
-        return res['command'] == bootprotocol.Command.PROG_SET_GO_APP_DELAY and res['data'][0] == 0
+    def cmd_prog_ext_flash_boot(self):
+        self._put_packet(bootprotocol.Command.PROG_EXT_FLASH_BOOT, b'')
+        res = self._block_get_packet() # waiting for a while ...
+        return res['command'] == bootprotocol.Command.PROG_EXT_FLASH_BOOT and res['data'][0] == 0
 
     def cmd_flash_set_pgsz(self, size):
-        self._put_packet(bootprotocol.Command.FLASH_SET_PGSZ,
-                         size.to_bytes(4, 'little'))
+        self._put_packet(bootprotocol.Command.FLASH_SET_PGSZ, size.to_bytes(4, 'little'))
         res = self._get_packet()
         return res['command'] == bootprotocol.Command.FLASH_SET_PGSZ and res['data'][0] == 0
 
@@ -189,6 +168,8 @@ class CommandTrnasHandler():
             return True, int.from_bytes(res['data'][1:3], 'little')
         else:
             return False, int(0)
+
+    ###############################
 
     def cmd_flash_write(self, page_addr, data):
         paylod = page_addr.to_bytes(4, 'little') + data
@@ -246,14 +227,8 @@ class CommandTrnasHandler():
 
     ###############################
 
-    def cmd_prog_ext_flash_boot(self):
-        self._put_packet(bootprotocol.Command.PROG_EXT_FLASH_BOOT, b'')
-        res = self._block_get_packet() # waiting for a while ...
-        return res['command'] == bootprotocol.Command.PROG_EXT_FLASH_BOOT and res['data'][0] == 0
-
     def cmd_eeprom_set_pgsz(self, size):
-        self._put_packet(bootprotocol.Command.EEPROM_SET_PGSZ,
-                         size.to_bytes(4, 'little'))
+        self._put_packet(bootprotocol.Command.EEPROM_SET_PGSZ, size.to_bytes(4, 'little'))
         res = self._get_packet()
         return res['command'] == bootprotocol.Command.EEPROM_SET_PGSZ and res['data'][0] == 0
 
@@ -291,7 +266,6 @@ class CommandTrnasHandler():
 
     def cmd_eeprom_earse_all(self):
         self._put_packet(bootprotocol.Command.EEPROM_EARSE_ALL, b'')
-
         res = self._get_packet()
         return res['command'] == bootprotocol.Command.EEPROM_EARSE_ALL and res['data'][0] == 0
 
@@ -303,7 +277,6 @@ class Loader():
         exceptions.CheckDeviceError: Device can't be dectected.
         exceptions.DeviceTypeError: The detected device is a different type than the specified device.
         FileNotFoundError: Can't find flash or eeprom programming file (image).
-        exceptions.GoAppDelayValueError: Delay time setting out of range (50~30000).
         exceptions.ComuError: Communication error.
         exceptions.FlashIsNotIhexError: The flash programming file (image) is not intel hex format.
         exceptions.EepromIsNotIhexError: The eeprom programming file (image) is not intel hex format.
@@ -315,12 +288,10 @@ class Loader():
     _is_ext_flash_prog = bool()
     _is_ext_flash_boot = bool()
     _is_eeprom_prog    = bool()
-    _is_go_app         = bool()
 
     _flash_file        = str()
     _ext_flash_file    = str()
     _eeprom_file       = str()
-    _go_app_delay      = int()
 
     class _Stage(enum.IntEnum):
         """ Programming transaction management object status
@@ -359,11 +330,9 @@ class Loader():
         is_ext_flash_prog:  bool = False,
         is_eeprom_prog:     bool = False,
         is_ext_flash_boot:  bool = False,
-        is_go_app:          bool = False,
         flash_file:         str = '',
         ext_flash_file:     str = '',
         eeprom_file:        str = '',
-        go_app_delay:       int = 0,
     ):
         """ Initialization
 
@@ -380,14 +349,10 @@ class Loader():
                 Whether to program eeprom. The default is False.
             is_ext_flash_boot (bool, optional):
                 Whether to burn files from external flash to internal flash. The default is False.
-            is_go_app (bool, optional):
-                Whether to execute the application after programming. The default is False.
             flash_file (str, optional):
                 The flash image. The default is ''.
             eeprom_file (str, optional):
                 The eeprom image. The default is ''.
-            go_app_delay (int, optional):
-                The delay time from programming to executing the application, in ms. The default is 0.
         """
         self._ser = ser
 
@@ -398,11 +363,9 @@ class Loader():
         self._is_ext_flash_prog = is_ext_flash_prog
         self._is_eeprom_prog    = is_eeprom_prog
         self._is_ext_flash_boot = is_ext_flash_boot
-        self._is_go_app         = is_go_app
         self._flash_file        = flash_file
         self._ext_flash_file    = ext_flash_file
         self._eeprom_file       = eeprom_file
-        self._go_app_delay      = go_app_delay
 
         self._prepare()
 
@@ -467,14 +430,6 @@ class Loader():
             if os.path.isfile(self._eeprom_file) is False:
                 raise FileNotFoundError
 
-        if self._is_go_app:
-            if self._go_app_delay > 65535:
-                raise exceptions.GoAppDelayValueError(self._go_app_delay)
-
-        if self._is_ext_flash_boot:
-            if self._go_app_delay > 65535:
-                raise exceptions.GoAppDelayValueError(self._go_app_delay)
-
         self._prepare_flash()
         self._prepare_ext_flash()
         self._prepare_eeprom()
@@ -501,7 +456,7 @@ class Loader():
         # prog time
         if self._device_type == 1: # D_ATSAME54_DEVB
             self._prog_time = len(self._flash_pages) * \
-                0.5 + len(self._eeprom_pages) * 0.05 + 0.23 + 3
+                0.5 + len(self._eeprom_pages) * 0.05 + 0.23
 
     def _prepare_device(self):
         """ Check if the device matches the set device number.
@@ -510,9 +465,9 @@ class Loader():
             exceptions.ComuError: Unable to communicate
             exceptions.CheckDeviceError: Device comparison error.
         """
-        res, ver = self._cth.cmd_chk_protocol()
+        res, self._protocol_version = self._cth.cmd_chk_protocol()
 
-        if res and ver == 2:
+        if res and self._protocol_version == 1:
             res2, detected_device = self._cth.cmd_prog_chk_device()
             if res2 is False:
                 raise exceptions.ComuError()
@@ -523,13 +478,10 @@ class Loader():
         if device.device_list[self._device_type]['protocol_version'] == 0:
             self._device_type = detected_device
 
-        # check for protocol v2 (e.g. m128_v3, m3_v1)
-        elif device.device_list[self._device_type]['protocol_version'] == 2:
+        elif device.device_list[self._device_type]['protocol_version'] == 1:
             if detected_device != self._device_type:
-                raise exceptions.CheckDeviceError(
-                    self._device_type, detected_device)
+                raise exceptions.CheckDeviceError(self._device_type, detected_device)
 
-        self._protocol_version = device.device_list[self._device_type]['protocol_version']
         self._device_name = device.device_list[self._device_type]['name']
 
     def _prepare_flash(self):
@@ -546,8 +498,7 @@ class Loader():
         if self._is_flash_prog:
             try:
                 blocks = ihex.parse(self._flash_file)
-                self._flash_size = sum([len(block['data'])
-                                        for block in blocks])
+                self._flash_size = sum([len(block['data']) for block in blocks])
                 blocks = ihex.padding_space(blocks, 256, 0xFF)
                 self._flash_pages = ihex.cut_to_pages(blocks, 256)
             except Exception:
@@ -561,8 +512,7 @@ class Loader():
         if self._is_ext_flash_prog:
             try:
                 blocks = ihex.parse(self._ext_flash_file)
-                self._ext_flash_size = sum([len(block['data'])
-                                        for block in blocks])
+                self._ext_flash_size = sum([len(block['data']) for block in blocks])
                 blocks = ihex.padding_space(blocks, 256, 0xFF)
                 self._ext_flash_pages = ihex.cut_to_pages(blocks, 256)
             except Exception:
@@ -583,8 +533,7 @@ class Loader():
         if self._is_eeprom_prog:
             try:
                 blocks = ihex.parse(self._eeprom_file)
-                self._eeprom_size = sum([len(block['data'])
-                                         for block in blocks])
+                self._eeprom_size = sum([len(block['data']) for block in blocks])
                 blocks = ihex.padding_space(blocks, 256, 0xFF)
                 self._eeprom_pages = ihex.cut_to_pages(blocks, 256)
             except Exception:
@@ -633,11 +582,7 @@ class Loader():
             self._stage = next(self._stage_iter)
 
     def _do_prog_end_step(self):
-        if self._is_go_app:
-            self._cth.cmd_prog_set_go_app_delay(self._go_app_delay)
-            self._cth.cmd_prog_end_and_go_app()
-        else:
-            self._cth.cmd_prog_end()
+        self._cth.cmd_prog_end()
         self._cur_step += 1
 
     def do_step(self):

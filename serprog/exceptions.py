@@ -26,11 +26,6 @@ class DeviceNotResponseError(Error):
     def __init__(self):
         pass
 
-class GoAppDelayValueError(Error):
-    delay: int
-    def __init__(self, delay):
-        self.delay = delay
-
 class ComuError(Error):
     def __init__(self):
         pass
