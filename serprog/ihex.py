@@ -16,7 +16,7 @@ loader is supprot ihex file. The output binary data of compiler
 from serprog import exceptions
 
 def parse(filename: str) -> list:
-    """Parse ihex file to data blocks.
+    """ Parse ihex file to data blocks.
     
     Args:
         filename (str): The file to parse.
