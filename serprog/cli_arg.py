@@ -83,26 +83,26 @@ def parser_prog_init(parser: argparse.ArgumentParser):
         help        = arg_f_help
     )
 
-    # Select programmed external flash image. -E
-    arg_E_help = 'Set binary file which program to externel flash.'
+    # Select programmed external flash image. -ef
+    arg_ef_help = 'Set binary file which program to externel flash.'
     parser.add_argument(
-        *('-E', '--extflash'),
+        *('-ef', '--extflash'),
         action      = 'store',
         dest        = 'ext_flash_file',
         type        = str,
         required    = False,
-        help        = arg_E_help
+        help        = arg_ef_help
     )
 
-    # Select programmed file name in embedded file system. -i
-    arg_i_help = 'Program from externel flash to internel flash.'
+    # Select programmed file name in embedded file system. -flashboot
+    arg_flash_boot_help = 'Program from externel flash to internel flash.'
     parser.add_argument(
-        *('-i', '--extflash_boot'),
+        *('-flashboot', '--extflash_boot'),
         action      = 'store_true',
         dest        = 'ext_flash_boot',
         # type        = str,
         required    = False,
-        help        = arg_i_help
+        help        = arg_flash_boot_help
     )
 
     # Select programmed eeprom image. -e
@@ -116,25 +116,25 @@ def parser_prog_init(parser: argparse.ArgumentParser):
         help        = arg_e_help
     )
 
-    # Select execute after programming. -a
-    arg_a_help = 'Enter the application after programing.'
+    # Select execute after programming. -r
+    arg_r_help = 'Enter the application after programing.'
     parser.add_argument(
-        *('-a', '--after-prog-go-app'),
+        *('-r', '--run-after-prog'),
         action      = 'store_true',
         dest        = 'is_go_app',
         required    = False,
-        help        = arg_a_help
+        help        = arg_r_help
     )
 
-    # Select delay time of execution after programming. -D
-    arg_D_help = 'Set delay time from programing completion to executing application.(in ms)'
+    # Select delay time of execution after programming. -delay
+    arg_delay_help = 'Set delay time from programing completion to executing application.(in ms)'
     parser.add_argument(
-        *('-D', '--go-app-delay'),
+        *('-delay', '--go-app-delay'),
         dest        = 'go_app_delay',
         type        = int,
         required    = False,
         default     = 50,
-        help        = arg_D_help
+        help        = arg_delay_help
     )
 
 
