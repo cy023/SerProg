@@ -114,7 +114,7 @@ class CommandTrnasHandler():
         print('\033[93m' + '[_block_get_packet]' + '\033[0m', packet)
         return packet
 
-    def _put_packet(self, cmd: Union[bootprotocol.Command, int], data: bytearray):
+    def _put_packet(self, cmd: Union[bootprotocol.CMD, int], data: bytearray):
         """ Put Packet function (polling)
 
         Args:
@@ -128,43 +128,43 @@ class CommandTrnasHandler():
     ###############################
 
     def cmd_chk_protocol(self):
-        self._put_packet(bootprotocol.Command.CHK_PROTOCOL, b'test')
+        self._put_packet(bootprotocol.CMD.CHK_PROTOCOL, b'test')
         res = self._get_packet()
 
         if res == None:
             return False, 0
-        elif res['command'] == bootprotocol.Command.CHK_PROTOCOL and res['data'][0] == 0:
+        elif res['command'] == bootprotocol.CMD.CHK_PROTOCOL and res['data'][0] == 0:
             return True, res['data'][1]
         else:
             return False, 0
 
     def cmd_chk_device(self):
-        self._put_packet(bootprotocol.Command.CHK_DEVICE, b'')
+        self._put_packet(bootprotocol.CMD.CHK_DEVICE, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.CHK_DEVICE and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.CHK_DEVICE and res['data'][0] == 0:
             return True, res['data'][1]
         else:
             return False, int(0)
 
     def cmd_prog_end(self):
-        self._put_packet(bootprotocol.Command.PROG_END, b'')
+        self._put_packet(bootprotocol.CMD.PROG_END, b'')
         res = self._get_packet()
-        return res['command'] == bootprotocol.Command.PROG_END and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.PROG_END and res['data'][0] == 0
 
     def cmd_prog_ext_flash_boot(self):
-        self._put_packet(bootprotocol.Command.PROG_EXT_FLASH_BOOT, b'')
+        self._put_packet(bootprotocol.CMD.PROG_EXT_FLASH_BOOT, b'')
         res = self._block_get_packet() # waiting for a while ...
-        return res['command'] == bootprotocol.Command.PROG_EXT_FLASH_BOOT and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.PROG_EXT_FLASH_BOOT and res['data'][0] == 0
 
     def cmd_flash_set_pgsz(self, size):
-        self._put_packet(bootprotocol.Command.FLASH_SET_PGSZ, size.to_bytes(4, 'little'))
+        self._put_packet(bootprotocol.CMD.FLASH_SET_PGSZ, size.to_bytes(4, 'little'))
         res = self._get_packet()
-        return res['command'] == bootprotocol.Command.FLASH_SET_PGSZ and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.FLASH_SET_PGSZ and res['data'][0] == 0
 
     def cmd_flash_get_pgsz(self):
-        self._put_packet(bootprotocol.Command.FLASH_GET_PGSZ, b'')
+        self._put_packet(bootprotocol.CMD.FLASH_GET_PGSZ, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.FLASH_GET_PGSZ and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.FLASH_GET_PGSZ and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:3], 'little')
         else:
             return False, int(0)
@@ -173,44 +173,44 @@ class CommandTrnasHandler():
 
     def cmd_flash_write(self, page_addr, data):
         paylod = page_addr.to_bytes(4, 'little') + data
-        self._put_packet(bootprotocol.Command.FLASH_WRITE, paylod)
+        self._put_packet(bootprotocol.CMD.FLASH_WRITE, paylod)
         res = self._get_packet()
-        return res['command'] == bootprotocol.Command.FLASH_WRITE and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.FLASH_WRITE and res['data'][0] == 0
 
     def cmd_flash_read(self):
-        self._put_packet(bootprotocol.Command.FLASH_READ, b'')
+        self._put_packet(bootprotocol.CMD.FLASH_READ, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.FLASH_READ and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.FLASH_READ and res['data'][0] == 0:
             return True, res['data']
         else:
             return False, bytearray(b'')
 
     def cmd_flash_earse_sector(self, num):
-        self._put_packet(bootprotocol.Command.FLASH_EARSE_SECTOR,
+        self._put_packet(bootprotocol.CMD.FLASH_EARSE_SECTOR,
                          num.to_bytes(2, 'little'))
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.FLASH_EARSE_SECTOR and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.FLASH_EARSE_SECTOR and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:5], 'little')
         else:
             return False, int(0)
         
     def cmd_flash_earse_all(self):
-        self._put_packet(bootprotocol.Command.FLASH_EARSE_ALL, b'')
+        self._put_packet(bootprotocol.CMD.FLASH_EARSE_ALL, b'')
         res = self._block_get_packet() # waiting for a while ...
-        return res['command'] == bootprotocol.Command.FLASH_EARSE_ALL and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.FLASH_EARSE_ALL and res['data'][0] == 0
 
     ###############################
 
     def cmd_ext_flash_fopen(self):
-        self._put_packet(bootprotocol.Command.EXT_FLASH_FOPEN, b'fopen')
+        self._put_packet(bootprotocol.CMD.EXT_FLASH_FOPEN, b'fopen')
         res = self._get_packet()
-        return res['command'] == bootprotocol.Command.EXT_FLASH_FOPEN and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.EXT_FLASH_FOPEN and res['data'][0] == 0
 
     def cmd_ext_flash_write(self, page_addr, data):
         paylod = page_addr.to_bytes(4, 'little') + data
-        self._put_packet(bootprotocol.Command.EXT_FLASH_WRITE, paylod)
+        self._put_packet(bootprotocol.CMD.EXT_FLASH_WRITE, paylod)
         res = self._get_packet()
-        return res['command'] == bootprotocol.Command.EXT_FLASH_WRITE and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.EXT_FLASH_WRITE and res['data'][0] == 0
 
     def cmd_ext_flash_read(self):
         pass
@@ -218,9 +218,9 @@ class CommandTrnasHandler():
     def cmd_ext_flash_fclose(self):
         now = datetime.datetime.now()
         t_stamp = bytearray([now.minute, now.hour, now.day, now.month, (now.year - 2000)])
-        self._put_packet(bootprotocol.Command.EXT_FLASH_FCLOSE, t_stamp)
+        self._put_packet(bootprotocol.CMD.EXT_FLASH_FCLOSE, t_stamp)
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.EXT_FLASH_FCLOSE and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.EXT_FLASH_FCLOSE and res['data'][0] == 0:
             return True
         else:
             return False
@@ -228,46 +228,46 @@ class CommandTrnasHandler():
     ###############################
 
     def cmd_eeprom_set_pgsz(self, size):
-        self._put_packet(bootprotocol.Command.EEPROM_SET_PGSZ, size.to_bytes(4, 'little'))
+        self._put_packet(bootprotocol.CMD.EEPROM_SET_PGSZ, size.to_bytes(4, 'little'))
         res = self._get_packet()
-        return res['command'] == bootprotocol.Command.EEPROM_SET_PGSZ and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.EEPROM_SET_PGSZ and res['data'][0] == 0
 
     def cmd_eeprom_get_pgsz(self):
-        self._put_packet(bootprotocol.Command.EEPROM_GET_PGSZ, b'')
+        self._put_packet(bootprotocol.CMD.EEPROM_GET_PGSZ, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.EEPROM_GET_PGSZ and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.EEPROM_GET_PGSZ and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:3], 'little')
         else:
             return False, int(0)
 
     def cmd_eeprom_write(self, page_data):
-        self._put_packet(bootprotocol.Command.EEPROM_WRITE, page_data)
+        self._put_packet(bootprotocol.CMD.EEPROM_WRITE, page_data)
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.EEPROM_WRITE and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.EEPROM_WRITE and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:5], 'little')
         else:
             return False, int(0)
 
     def cmd_eeprom_read(self):
-        self._put_packet(bootprotocol.Command.EEPROM_READ, b'')
+        self._put_packet(bootprotocol.CMD.EEPROM_READ, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.EEPROM_READ and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.EEPROM_READ and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:5], 'little')
         else:
             return False, int(0)
 
     def cmd_eeprom_earse(self):
-        self._put_packet(bootprotocol.Command.EEPROM_EARSE, b'')
+        self._put_packet(bootprotocol.CMD.EEPROM_EARSE, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.EEPROM_EARSE and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.EEPROM_EARSE and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:5], 'little')
         else:
             return False, int(0)
 
     def cmd_eeprom_earse_all(self):
-        self._put_packet(bootprotocol.Command.EEPROM_EARSE_ALL, b'')
+        self._put_packet(bootprotocol.CMD.EEPROM_EARSE_ALL, b'')
         res = self._get_packet()
-        return res['command'] == bootprotocol.Command.EEPROM_EARSE_ALL and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.EEPROM_EARSE_ALL and res['data'][0] == 0
 
 
 class Loader():

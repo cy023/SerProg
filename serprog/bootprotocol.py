@@ -7,7 +7,7 @@ from typing import Union
 
 HEADER = b'\xA5\xA5\xA5'
 
-class Command(enum.IntEnum):
+class CMD(enum.IntEnum):
     CHK_PROTOCOL            = 0x01
     CHK_DEVICE              = 0x02
     PROG_END                = 0x03
@@ -66,7 +66,7 @@ class Decoder(object):
                 self._status = self._Status.COMMAND
 
         elif self._status is self._Status.COMMAND:
-            self._command = Command(ch)
+            self._command = CMD(ch)
             self._counter = 0
             self._status = self._Status.LENGTH
 
@@ -117,7 +117,7 @@ class Decoder(object):
             }
         return res
 
-def encode(cmd: Union[int, Command], data: bytes) -> bytes:
+def encode(cmd: Union[int, CMD], data: bytes) -> bytes:
     """Encode command, data to a package.
     
     Args:
