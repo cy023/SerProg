@@ -5,17 +5,13 @@ Bootloader Protocol implementation.
 import enum
 from typing import Union
 
-HEADER = b'\xFC\xFC\xFC'
-TOCKEN = b'\x01'
+HEADER = b'\xA5\xA5\xA5'
 
 class Command(enum.IntEnum):
-    CHK_PROTOCOL            = 0xFA
-
-    PROG_CHK_DEVICE         = 0x02
+    CHK_PROTOCOL            = 0x01
+    CHK_DEVICE              = 0x02
     PROG_END                = 0x03
-    PROG_END_AND_GO_APP     = 0x04
-    PROG_SET_GO_APP_DELAY   = 0x05
-    PROG_EXT_FLASH_BOOT     = 0x06
+    PROG_EXT_FLASH_BOOT     = 0x04
 
     FLASH_SET_PGSZ          = 0x10
     FLASH_GET_PGSZ          = 0x11
@@ -44,10 +40,9 @@ class Decoder(object):
     class _Status(enum.IntEnum):
         HEADER  = 0
         COMMAND = 1
-        TOCKEN  = 2
-        LENGTH  = 3
-        DATA    = 4
-        CHKSUM  = 5
+        LENGTH  = 2
+        DATA    = 3
+        CHKSUM  = 4
 
     _header_buffer = b'\x00\x00\x00'
     _counter = int()
@@ -73,9 +68,6 @@ class Decoder(object):
         elif self._status is self._Status.COMMAND:
             self._command = Command(ch)
             self._counter = 0
-            self._status = self._Status.TOCKEN
-
-        elif self._status is self._Status.TOCKEN:
             self._status = self._Status.LENGTH
 
         elif self._status is self._Status.LENGTH:
@@ -135,13 +127,11 @@ def encode(cmd: Union[int, Command], data: bytes) -> bytes:
     Returns:
         bytes: Package as bytes.
     """
-    chksum = sum(data) % 256
 
     res  = bytes()
     res += HEADER
     res += cmd.to_bytes(1, 'little')
-    res += TOCKEN
     res += len(data).to_bytes(2, 'big')
     res += data
-    res += chksum.to_bytes(1, 'little')
+    res += (sum(data) % 256).to_bytes(1, 'little')
     return res

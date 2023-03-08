@@ -138,10 +138,10 @@ class CommandTrnasHandler():
         else:
             return False, 0
 
-    def cmd_prog_chk_device(self):
-        self._put_packet(bootprotocol.Command.PROG_CHK_DEVICE, b'')
+    def cmd_chk_device(self):
+        self._put_packet(bootprotocol.Command.CHK_DEVICE, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.Command.PROG_CHK_DEVICE and res['data'][0] == 0:
+        if res['command'] == bootprotocol.Command.CHK_DEVICE and res['data'][0] == 0:
             return True, res['data'][1]
         else:
             return False, int(0)
@@ -468,7 +468,7 @@ class Loader():
         res, self._protocol_version = self._cth.cmd_chk_protocol()
 
         if res and self._protocol_version == 1:
-            res2, detected_device = self._cth.cmd_prog_chk_device()
+            res2, detected_device = self._cth.cmd_chk_device()
             if res2 is False:
                 raise exceptions.ComuError()
         else:
