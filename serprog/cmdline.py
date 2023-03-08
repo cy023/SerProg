@@ -94,17 +94,6 @@ def parser_prog_init(parser: argparse.ArgumentParser):
         help        = arg_ef_help
     )
 
-    # Select programmed file name in embedded file system. -flashboot
-    arg_flash_boot_help = 'Program from externel flash to internel flash.'
-    parser.add_argument(
-        *('-flashboot', '--extflash_boot'),
-        action      = 'store_true',
-        dest        = 'ext_flash_boot',
-        # type        = str,
-        required    = False,
-        help        = arg_flash_boot_help
-    )
-
     # Select programmed eeprom image. -e
     arg_e_help = 'Set binary file which program to eeprom.'
     parser.add_argument(
@@ -114,6 +103,17 @@ def parser_prog_init(parser: argparse.ArgumentParser):
         type        = str,
         required    = False,
         help        = arg_e_help
+    )
+
+    # Select programmed file name in embedded file system. -flashboot
+    arg_flash_boot_help = 'Program from externel flash to internel flash.'
+    parser.add_argument(
+        *('-flashboot', '--extflash_boot'),
+        action      = 'store_true',
+        dest        = 'ext_flash_boot',
+        # type        = str,
+        required    = False,
+        help        = arg_flash_boot_help
     )
 
 
