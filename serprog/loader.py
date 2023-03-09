@@ -92,7 +92,7 @@ class CommandTrnasHandler():
         if pac_decode_err_flag:
             # packet decode error
             raise exceptions.ComuError
-        print('\033[93m' + '[_get_packet]' + '\033[0m', packet)
+        # print('\033[93m' + '[_get_packet]' + '\033[0m', packet)
         return packet
 
     def _block_get_packet(self):
@@ -111,7 +111,7 @@ class CommandTrnasHandler():
                 break
             elif self._pd.isError():
                 raise exceptions.ComuError
-        print('\033[93m' + '[_block_get_packet]' + '\033[0m', packet)
+        # print('\033[93m' + '[_block_get_packet]' + '\033[0m', packet)
         return packet
 
     def _put_packet(self, cmd: Union[bootprotocol.CMD, int], data: bytearray):
@@ -122,7 +122,7 @@ class CommandTrnasHandler():
             data (bytearray): packet data.
         """
         req_raw = bootprotocol.encode(cmd, data)
-        print('\033[93m' + '\n[_put_packet]' + '\033[0m', req_raw)
+        # print('\033[93m' + '\n[_put_packet]' + '\033[0m', req_raw)
         self._ser.write(req_raw)
 
     ###############################

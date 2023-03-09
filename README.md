@@ -10,3 +10,8 @@ A serial and secure programming tool for microcontroller.
 ### Bootloader Protocol
 
 ### Secure Boot
+
+### Reference
+asaloader (https://gitlab.com/MVMC-lab/hervor/asaloader)
+
+Special thanks to LiYu87 for their early contributions to this project.
