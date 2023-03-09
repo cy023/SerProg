@@ -14,4 +14,4 @@ A serial and secure programming tool for microcontroller.
 ### Reference
 asaloader (https://gitlab.com/MVMC-lab/hervor/asaloader)
 
-Special thanks to LiYu87 for their early contributions to this project.
+Special thanks to LiYu87 for his early contributions to this project.
