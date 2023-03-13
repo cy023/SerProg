@@ -27,80 +27,97 @@ def parse(filename: str) -> list:
     Returns:
         list: data blocks with start address.
     """
+
+    # IHEX record types
+    DATA_RECORD = 0
+    EOF_RECORD = 1
+    EXT_SEG_ADDR_RECORD = 2
+    START_SEG_ADDR_RECORD = 3
+    EXT_LINEAR_ADDR_RECORD = 4
+    START_LINEAR_ADDR_RECORD = 5
+
     with open(filename, 'r') as hexfile:
-        s_i = 0 # sections index
         sections = []
-        ext_addr = 0
+        section_index = 0
+        extended_address = 0
         eof_flag = False
 
         for line in hexfile.readlines():
-            # NOTE line is end up with '\n'
-
+            # line is end up with '\n'
             if len(line) < 12:
                 # less than minimum length of General Record Format
                 raise exceptions.IhexFormatError(filename)
 
-            if line[0] != ':':
-                # Record Mark is not ':'
+            # Check record mark
+            if not line.startswith(':'):
                 raise exceptions.IhexFormatError(filename)
             
-            # parse basic info from line
-            reclen = int(line[1:3], 16)
+            # Parse IHEX record fields
+            record_length = int(line[1:3], 16)
             address = int(line[3:7], 16)
-            content_type = int(line[7:9], 16)
-            chksum = int(line[-3:-1], 16)
+            record_type = int(line[7:9], 16)
+            checksum = int(line[-3:-1], 16)
 
             # check record length and parse data
-            if reclen != 0:
-                if len(line) != 12 + reclen * 2:
+            if record_length != 0:
+                if len(line) != 12 + record_length * 2:
                     raise exceptions.IhexFormatError(filename)
                 else:
-                    data = bytearray.fromhex(line[9: 9 + reclen*2])
+                    data = bytearray.fromhex(line[9 : 9 + record_length*2])
             else:
                 data = b''
-            if content_type == 0:
-                # Data
-                if s_i == 0:
-                    sections += [{
-                        'address': (ext_addr << 16) + address,
+
+            if record_type == DATA_RECORD:
+                # Data record
+                if section_index == 0:
+                    # First section
+                    sections.append({
+                        'address': (extended_address << 16) + address,
                         'data': data
-                    }]
-                    s_i = s_i + 1
-                elif (
-                    (ext_addr << 16) + address ==
-                    sections[s_i-1]['address'] + len(sections[s_i-1]['data'])
-                ):
-                    sections[s_i-1]['data'] = sections[s_i-1]['data'] + data
+                    })
+                    section_index += 1
+
+                elif (extended_address << 16) + address == sections[section_index-1]['address'] + len(sections[section_index-1]['data']):
+                    # Add data to previous section
+                    sections[section_index-1]['data'] += data
+
                 else:
-                    sections += [{
-                        'address': (ext_addr << 16) + address,
+                    # Start new section
+                    sections.append({
+                        'address': (extended_address << 16) + address,
                         'data': data
-                    }]
-                    s_i = s_i + 1
-            elif content_type == 1:
-                # End Of File
+                    })
+                    section_index += 1
+
+            elif record_type == EOF_RECORD:
+                # End of file record
                 if address == 0:
                     eof_flag = True
                 else:
                     raise exceptions.IhexFormatError(filename)
-            elif content_type == 2:
+
+            elif record_type == EXT_SEG_ADDR_RECORD:
                 # Extended Segment Address
                 pass
-            elif content_type == 3:
+
+            elif record_type == START_SEG_ADDR_RECORD:
                 # Start Segment Address
                 pass
-            elif content_type == 4:
+
+            elif record_type == EXT_LINEAR_ADDR_RECORD:
                 # Extended Linear Address
-                ext_addr = int(line[9:13], 16)
+                extended_address = int(line[9:13], 16)
                 pass
-            elif content_type == 5:
+
+            elif record_type == START_LINEAR_ADDR_RECORD:
                 # Start Linear Address
                 pass
-    
-    if eof_flag is False:
-        raise exceptions.IhexFormatError(filename)
+
+        if not eof_flag:
+            raise exceptions.IhexFormatError(filename)
 
     return sections
+
 
 def padding_space(h, pgsz: int, space_data: bytes) -> list: 
     """Padding each data block with `space_data` to let block size fit pgsz * N.
@@ -115,33 +132,25 @@ def padding_space(h, pgsz: int, space_data: bytes) -> list:
     """
     res = []
     for sect in h:
-        sect_addr = sect['address']
-        sect_data = sect['data']
+        sect_addr, sect_data = sect['address'], sect['data']
 
         # (start address) not equal (pgsz * N)
-        # 0xFF padding forward
-        if sect_addr % pgsz != 0:
-            n = sect_addr // pgsz
-            l = sect_addr - pgsz * n
-            sect_addr = pgsz * n
-            a = bytes([0xff for i in range(l)])
-            sect_data = a + sect_data
-        
-        # (end address + 1) not equal (pgsz * N)
-        # 0xFF padding
-        if (sect_addr + len(sect_data)) % pgsz != 0:
-            n = (sect_addr + len(sect_data)) // pgsz
-            l = pgsz * (n + 1) - (sect_addr + len(sect_data))
-            a = bytes([0xff for i in range(l)])
-            sect_data = sect_data + a
+        # Pad before the data
+        start_padding_len = sect_addr % pgsz
+        start_padding = bytes(space_data * start_padding_len)
+        sect_data = start_padding + sect_data
 
-        res += [{
-            'address': sect_addr,
-            'data': sect_data
-        }]
-    
+        # (end address + 1) not equal (pgsz * N)
+        # Pad after the data
+        end_padding_len = pgsz - len(sect_data) % pgsz if len(sect_data) % pgsz != 0 else 0
+        end_padding = bytes(space_data * end_padding_len)
+        sect_data = sect_data + end_padding
+
+        res.append({'address': (sect_addr // pgsz) * pgsz, 'data': sect_data})
+
     return res
-        
+
+
 def cut_to_pages(h, pgsz):
     """Cut each data block to pages.
     
@@ -154,13 +163,10 @@ def cut_to_pages(h, pgsz):
     """
     res = []
     for sect in h:
-        sect_addr = sect['address']
-        sect_data = sect['data']
-        for i in range(len(sect_data)//pgsz):
-            res += [{
-                'address': sect_addr + i * pgsz,
-                'data': sect_data[i * pgsz : i * pgsz + pgsz]
-            }]
+        sect_addr, sect_data = sect['address'], sect['data']
+        for i in range(0, len(sect_data), pgsz):
+            page = {'address': sect_addr + i, 'data': sect_data[i : i + pgsz]}
+            res.append(page)
     return res
 
 

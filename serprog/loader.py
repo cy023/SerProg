@@ -499,7 +499,7 @@ class Loader():
             try:
                 blocks = ihex.parse(self._flash_file)
                 self._flash_size = sum([len(block['data']) for block in blocks])
-                blocks = ihex.padding_space(blocks, 512, 0xFF)
+                blocks = ihex.padding_space(blocks, 512, bytes.fromhex('FF'))
                 self._flash_pages = ihex.cut_to_pages(blocks, 512)
             except Exception:
                 raise exceptions.FlashIsNotIhexError(self._flash_file)
@@ -513,7 +513,7 @@ class Loader():
             try:
                 blocks = ihex.parse(self._ext_flash_file)
                 self._ext_flash_size = sum([len(block['data']) for block in blocks])
-                blocks = ihex.padding_space(blocks, 512, 0xFF)
+                blocks = ihex.padding_space(blocks, 512, bytes.fromhex('FF'))
                 self._ext_flash_pages = ihex.cut_to_pages(blocks, 512)
             except Exception:
                 raise exceptions.FlashIsNotIhexError(self._ext_flash_file)
@@ -534,7 +534,7 @@ class Loader():
             try:
                 blocks = ihex.parse(self._eeprom_file)
                 self._eeprom_size = sum([len(block['data']) for block in blocks])
-                blocks = ihex.padding_space(blocks, 512, 0xFF)
+                blocks = ihex.padding_space(blocks, 512, bytes.fromhex('FF'))
                 self._eeprom_pages = ihex.cut_to_pages(blocks, 512)
             except Exception:
                 raise exceptions.EepromIsNotIhexError(self._eeprom_file)
