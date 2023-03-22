@@ -19,15 +19,15 @@ device_list = [
         'userapp_start': 0x00010000,
         'userapp_size':  0x000F0000,
         'note': ''
+    },
+    {
+        'name': 'NUM487KM_DEVB',
+        'dev_type': 2,
+        'protocol_version': 1,
+        'userapp_start': 0x00010000,
+        'userapp_size':  0x000F0000,
+        'note': ''
     }
-    # {
-    #     'name': 'NUM487KM_DEVB',
-    #     'dev_type': 2,
-    #     'protocol_version': 1,
-    #     'userapp_start': 0x00010000,
-    #     'userapp_size':  0x000F0000,
-    #     'note': ''
-    # },
 ]
 
 def get_device_by_str(s: str) -> int:
