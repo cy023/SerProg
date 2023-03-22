@@ -455,8 +455,13 @@ class Loader():
 
         # prog time
         if self._device_type == 1: # D_ATSAME54_DEVB
-            self._prog_time = len(self._flash_pages) * \
-                0.5 + len(self._eeprom_pages) * 0.05 + 0.23
+            self._prog_time = len(self._flash_pages) * 0.23 + \
+                                len(self._eeprom_pages) * 0.05 + \
+                                len(self._ext_flash_pages) * 0.3 + 4.5
+        if self._device_type == 2: # D_NUM487KM_DEVB
+            self._prog_time = len(self._flash_pages) * 0.14 + \
+                                len(self._eeprom_pages) * 0.05 + \
+                                len(self._ext_flash_pages) * 0.2 + 3.3
 
     def _prepare_device(self):
         """ Check if the device matches the set device number.
