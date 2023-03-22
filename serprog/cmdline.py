@@ -178,7 +178,7 @@ def chk_prog_args(args: argparse.Namespace) -> bool:
 
     # Serial port check.
     if args.port not in [p[0] for p in serial.tools.list_ports.comports()]:
-        print('Error: Cannot find serial port {0}.').format(args.port)
+        print('Error: Cannot find serial port {0}.'.format(args.port))
         print('The available serial ports are as follows:')
         business.do_print_ports(args)
         return False

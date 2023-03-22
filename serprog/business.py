@@ -38,7 +38,7 @@ def do_prog(args):
     try:
         ser.open()
     except:
-        print('ERROR: com port has been opened by another application.').format(args.port)
+        print('ERROR: {0} has been opened by another application.'.format(args.port))
         sys.exit(1)
 
     is_prog_flash     = bool(args.flash_file)
