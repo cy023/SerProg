@@ -39,12 +39,10 @@ def get_device_by_str(s: str) -> int:
     Returns:
         int: Device number. If returned -1, it failed. (wrong format s)
     """
-    if s.isdigit():
-        for d in device_list:
+    for d in device_list:
+        if s.isdigit():
             if int(s) == d['dev_type']:
                 return d['dev_type']
-    else:
-        for d in device_list:
-            if s == d['name']:
-                return d['dev_type']
+        elif s == d['name']:
+            return d['dev_type']
     return -1
