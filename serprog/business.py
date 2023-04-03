@@ -14,19 +14,17 @@ import serial
 import sys
 
 def do_print_devices(args):
-    s  = "Available device list:\n"
-    s += "    device name   \t num \t note\n"
-    for dev in device.device_list:
-        s += "  - {0:11s}  \t {1:4s}\t {2}\n".format(
-            dev['name'], str(dev['dev_type']), dev['note'])
-
-    print(s)
+    print("Available device list:")
+    print("    device name   \t num \t note")
+    print("-" * 40)
+    devices = [f"  - {dev['name']:11s}  \t {dev['dev_type']:4}\t {dev['note']}" for dev in device.device_list]
+    print('\n'.join(devices))
 
 def do_print_ports(args):
     for (port, desc, hwid) in serial.tools.list_ports.comports():
-        print("{:20}".format(port))
-        print("    desc: {}".format(desc))
-        print("    hwid: {}".format(hwid))
+        print(f"{port:20}")
+        print(f"    desc: {desc}")
+        print(f"    hwid: {hwid}")
 
 def do_prog(args):
 
@@ -38,7 +36,7 @@ def do_prog(args):
     try:
         ser.open()
     except:
-        print('ERROR: {0} has been opened by another application.'.format(args.port))
+        print(f"ERROR: {args.port} has been opened by another application.")
         sys.exit(1)
 
     is_prog_flash     = bool(args.flash_file)
@@ -71,12 +69,13 @@ def do_prog(args):
         print("       Detected device is '{0:s}'".format(device.device_list[e.real_dev]['name']))
         sys.exit(1)
 
-    print("Device is '{0:s}'".format(device.device_list[l.device_type]['name']))
-    print('Flash hex size is {0:0.2f} KB ({1} bytes)'.format(l.flash_size/1024, l.flash_size))
-    print('Externel Flash hex size is {0:0.2f} KB ({1} bytes)'.format(l.ext_flash_size/1024, l.ext_flash_size))
-    print('EEPROM hex size is {0} bytes.'.format(l.eeprom_size))
-    print('Estimated time  is {0:0.2f} s.'.format(l.prog_time))
+    print(f"Device is '{device.device_list[l.device_type]['name']}'")
+    print(f"Flash hex size is {l.flash_size/1024:.2f} KB ({l.flash_size} bytes)")
+    print(f"Externel Flash hex size is {l.ext_flash_size/1024:.2f} KB ({l.ext_flash_size} bytes)")
+    print(f"EEPROM hex size is {l.eeprom_size} bytes.")
+    print(f"Estimated time  is {l.prog_time:.2f} s.")
 
+    # Progress bar
     widgets = [
         ' [', progressbar.Timer('Elapsed Time: %(seconds)0.2fs', ), '] ',
         progressbar.Bar(),
@@ -85,6 +84,8 @@ def do_prog(args):
 
     bar = progressbar.ProgressBar(max_value=l.total_steps, widgets=widgets)
     bar.update(0)
+
+    # Program device
     for i in range(l.total_steps):
         try:
             l.do_step()
