@@ -105,16 +105,10 @@ class Decoder(object):
 
     def getPacket(self):
         if self.isDone():
-            res = {
-                'command': self._command,
-                'data': self._data
-            }
+            res = {'command': self._command, 'data': self._data}
             self._isDone = False
         else:
-            res = {
-                'command': None,
-                'data': b''
-            }
+            res = {'command': None, 'data': b''}
         return res
 
 def encode(cmd: Union[int, CMD], data: bytes) -> bytes:
@@ -128,10 +122,10 @@ def encode(cmd: Union[int, CMD], data: bytes) -> bytes:
         bytes: Package as bytes.
     """
 
-    res  = bytes()
-    res += HEADER
-    res += cmd.to_bytes(1, 'little')
-    res += len(data).to_bytes(2, 'big')
-    res += data
-    res += (sum(data) % 256).to_bytes(1, 'little')
-    return res
+    header   = HEADER
+    command  = cmd.to_bytes(1, 'little')
+    length   = len(data).to_bytes(2, 'big')
+    checksum = (sum(data) % 256).to_bytes(1, 'little')
+
+    payload = header + command + length + data + checksum
+    return payload
