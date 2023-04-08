@@ -18,7 +18,7 @@ A serial and secure programming tool for microcontroller.
 
 ## Boot scheme
 
-    ![](./img/boot_scheme.png)
+![](./img/boot_scheme.png)
 
 ## Bootloader Protocol
 
