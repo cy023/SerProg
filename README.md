@@ -12,6 +12,14 @@ A serial and secure programming tool for microcontroller.
 
     Bootloader for Nuvoton M480 series MCU (ARM Cortex-M4F)
 
+- [AuxMCUboot](https://github.com/cy023/AuxMCUboot)
+    
+    Bootloader for auxiliary MCU (ATmega16U4). The main function is to convert USB-UART protocol.
+
+## Boot scheme
+
+![Boot scheme](https://hackmd.io/_uploads/BkDxZqAbn.png)
+
 ## Bootloader Protocol
 
 ### Communication handshake
