@@ -18,7 +18,7 @@ A serial and secure programming tool for microcontroller.
 
 ## Boot scheme
 
-![Boot scheme](https://hackmd.io/_uploads/BkDxZqAbn.png)
+![](https://hackmd.io/_uploads/BkDxZqAbn.png)
 
 ## Bootloader Protocol
 
