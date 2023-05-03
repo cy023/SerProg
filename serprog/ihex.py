@@ -39,7 +39,9 @@ def parse(filename: str) -> list:
     with open(filename, 'r') as hexfile:
         sections = []
         section_index = 0
-        extended_address = 0
+        extend_address = 0
+        extend_seg_address = 0
+        extend_lin_address = 0
         eof_flag = False
 
         for line in hexfile.readlines():
@@ -69,22 +71,28 @@ def parse(filename: str) -> list:
 
             if record_type == DATA_RECORD:
                 # Data record
+                # 32-bit extended address
+                if extend_seg_address != 0:
+                    extend_address = extend_seg_address << 4
+                elif extend_lin_address != 0:
+                    extend_address = extend_lin_address << 16
+
                 if section_index == 0:
                     # First section
                     sections.append({
-                        'address': (extended_address << 16) + address,
+                        'address': extend_address + address,
                         'data': data
                     })
                     section_index += 1
 
-                elif (extended_address << 16) + address == sections[section_index-1]['address'] + len(sections[section_index-1]['data']):
+                elif extend_address + address == sections[section_index-1]['address'] + len(sections[section_index-1]['data']):
                     # Add data to previous section
                     sections[section_index-1]['data'] += data
 
                 else:
                     # Start new section
                     sections.append({
-                        'address': (extended_address << 16) + address,
+                        'address': extend_address + address,
                         'data': data
                     })
                     section_index += 1
@@ -98,6 +106,7 @@ def parse(filename: str) -> list:
 
             elif record_type == EXT_SEG_ADDR_RECORD:
                 # Extended Segment Address
+                extend_seg_address = int(line[9:13], 16)
                 pass
 
             elif record_type == START_SEG_ADDR_RECORD:
@@ -106,7 +115,7 @@ def parse(filename: str) -> list:
 
             elif record_type == EXT_LINEAR_ADDR_RECORD:
                 # Extended Linear Address
-                extended_address = int(line[9:13], 16)
+                extend_lin_address = int(line[9:13], 16)
                 pass
 
             elif record_type == START_LINEAR_ADDR_RECORD:
