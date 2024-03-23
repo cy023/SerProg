@@ -1,6 +1,6 @@
 # SerProg
 
-A serial and secure programming tool for microcontroller.
+A serial programming tool for microcontroller.
 
 ## Reference project
 
@@ -54,20 +54,34 @@ options:
     serprog prog -p COM1 -ef image.hex
     ```
 
-## Boot scheme
+## Overview
 
-![](./img/boot_scheme.png)
+### Boot scheme
+- Hardware scheme
+    ![](./img/boot_scheme_hardware.png =80%x)
 
-## Bootloader Protocol
+- Software scheme
+    ![](./img/boot_scheme_software.png =80%x)
 
-### Communication handshake
+### Bootloader Protocol
 
-### Communication command
+#### Finite State Machine
+![](./img/boot_FSM.png =60%x)
 
-### Flowchart
+#### Communication handshake
+- Programming to internal flash
+    ![](./img/boot_com_handshake_prog_in.png =80%x)
+- Programming to SPI NOR flash (Manage by LittleFS)
+    ![](./img/boot_com_handshake_prog_ex.png =80%x)
 
-### Bootloader packet format
+#### Communication command
+![](./img/boot_command.png =80%x)
 
-### Bootloader data format
+#### Flowchart
+![](./img/boot_flowchart.png =80%x)
 
-## Secure Boot
+<!-- #### Bootloader packet format
+
+#### Bootloader data format -->
+
+<!-- #### Secure Boot -->
