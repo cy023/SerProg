@@ -418,13 +418,11 @@ class Loader():
         if self._device_type > len(device.device_list):
             raise exceptions.DeviceTypeError(self._device_type)
 
-        if self._is_flash_prog:
-            if os.path.isfile(self._flash_file) is False:
-                raise FileNotFoundError
+        if self._is_flash_prog and os.path.isfile(self._flash_file) is False:
+            raise FileNotFoundError
 
-        if self._is_ext_flash_prog:
-            if os.path.isfile(self._ext_flash_file) is False:
-                raise FileNotFoundError
+        if self._is_ext_flash_prog and os.path.isfile(self._ext_flash_file) is False:
+            raise FileNotFoundError
 
         if self._is_eeprom_prog:
             if os.path.isfile(self._eeprom_file) is False:
