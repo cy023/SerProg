@@ -58,27 +58,25 @@ options:
 
 ### Boot scheme
 - Hardware scheme
-    ![](./img/boot_scheme_hardware.png =80%x)
-
+    <div align=center><img src="./img/boot_scheme_hardware.png" width="700"></div>
 - Software scheme
-    ![](./img/boot_scheme_software.png =80%x)
+    <div align=center><img src="./img/boot_scheme_software.png" width="700"></div>
 
 ### Bootloader Protocol
-
 #### Finite State Machine
-![](./img/boot_FSM.png =60%x)
+<div align=center><img src="./img/boot_FSM.png" width="400"></div>
 
 #### Communication handshake
 - Programming to internal flash
-    ![](./img/boot_com_handshake_prog_in.png =80%x)
-- Programming to SPI NOR flash (Manage by LittleFS)
-    ![](./img/boot_com_handshake_prog_ex.png =80%x)
+    <div align=center><img src="./img/boot_com_handshake_prog_in.png" width="600"></div>
+- Programming to SPI NOR flash (Managed by LittleFS)
+    <div align=center><img src="./img/boot_com_handshake_prog_ex.png" width="600"></div>
 
-#### Communication command
-![](./img/boot_command.png =80%x)
+#### Communication commands
+<div align=center><img src="./img/boot_command.png" width="700"></div>
 
 #### Flowchart
-![](./img/boot_flowchart.png =80%x)
+<div align=center><img src="./img/boot_flowchart.png" width="600"></div>
 
 <!-- #### Bootloader packet format
 
