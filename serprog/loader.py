@@ -185,19 +185,19 @@ class CommandTrnasHandler():
         else:
             return False, bytearray(b'')
 
-    def cmd_flash_earse_sector(self, num):
-        self._put_packet(bootprotocol.CMD.FLASH_EARSE_SECTOR,
+    def cmd_flash_erase_sector(self, num):
+        self._put_packet(bootprotocol.CMD.FLASH_ERASE_SECTOR,
                          num.to_bytes(2, 'little'))
         res = self._get_packet()
-        if res['command'] == bootprotocol.CMD.FLASH_EARSE_SECTOR and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.FLASH_ERASE_SECTOR and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:5], 'little')
         else:
             return False, int(0)
         
-    def cmd_flash_earse_all(self):
-        self._put_packet(bootprotocol.CMD.FLASH_EARSE_ALL, b'')
+    def cmd_flash_erase_all(self):
+        self._put_packet(bootprotocol.CMD.FLASH_ERASE_ALL, b'')
         res = self._block_get_packet() # waiting for a while ...
-        return res['command'] == bootprotocol.CMD.FLASH_EARSE_ALL and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.FLASH_ERASE_ALL and res['data'][0] == 0
 
     ###############################
 
@@ -256,18 +256,18 @@ class CommandTrnasHandler():
         else:
             return False, int(0)
 
-    def cmd_eeprom_earse(self):
-        self._put_packet(bootprotocol.CMD.EEPROM_EARSE, b'')
+    def cmd_eeprom_erase(self):
+        self._put_packet(bootprotocol.CMD.EEPROM_ERASE, b'')
         res = self._get_packet()
-        if res['command'] == bootprotocol.CMD.EEPROM_EARSE and res['data'][0] == 0:
+        if res['command'] == bootprotocol.CMD.EEPROM_ERASE and res['data'][0] == 0:
             return True, int.from_bytes(res['data'][1:5], 'little')
         else:
             return False, int(0)
 
-    def cmd_eeprom_earse_all(self):
-        self._put_packet(bootprotocol.CMD.EEPROM_EARSE_ALL, b'')
+    def cmd_eeprom_erase_all(self):
+        self._put_packet(bootprotocol.CMD.EEPROM_ERASE_ALL, b'')
         res = self._get_packet()
-        return res['command'] == bootprotocol.CMD.EEPROM_EARSE_ALL and res['data'][0] == 0
+        return res['command'] == bootprotocol.CMD.EEPROM_ERASE_ALL and res['data'][0] == 0
 
 
 class Loader():
@@ -547,7 +547,7 @@ class Loader():
         data = self._flash_pages[self._flash_page_idx]['data']
 
         if self._flash_page_idx == 0:
-            self._cth.cmd_flash_earse_all()
+            self._cth.cmd_flash_erase_all()
         self._cth.cmd_flash_write(address, data)
 
         self._flash_page_idx += 1

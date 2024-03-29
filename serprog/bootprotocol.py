@@ -18,22 +18,22 @@ class CMD(enum.IntEnum):
     FLASH_WRITE             = 0x12
     FLASH_READ              = 0x13
     FLASH_VERIFY            = 0x14
-    FLASH_EARSE_SECTOR      = 0x15
-    FLASH_EARSE_ALL         = 0x16
+    FLASH_ERASE_SECTOR      = 0x15
+    FLASH_ERASE_ALL         = 0x16
 
     EEPROM_SET_PGSZ         = 0x20
     EEPROM_GET_PGSZ         = 0x21
     EEPROM_WRITE            = 0x22
     EEPROM_READ             = 0x23
-    EEPROM_EARSE            = 0x24
-    EEPROM_EARSE_ALL        = 0x25
+    EEPROM_ERASE            = 0x24
+    EEPROM_ERASE_ALL        = 0x25
 
     EXT_FLASH_FOPEN         = 0x30
     EXT_FLASH_FCLOSE        = 0x31
     EXT_FLASH_WRITE         = 0x32
     EXT_FLASH_READ          = 0x33
     EXT_FLASH_VERIFY        = 0x34
-    EXT_FLASH_EARSE_SECTOR  = 0x35
+    EXT_FLASH_ERASE_SECTOR  = 0x35
     EXT_FLASH_HEX_DEL       = 0x36
 
 class Decoder(object):
